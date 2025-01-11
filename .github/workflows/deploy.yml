@@ -17,8 +17,9 @@ jobs:
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
 
+
       - name: Build project
-        run: bun run build
+        run: bun install && bun run build
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v3
