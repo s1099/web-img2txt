@@ -14,14 +14,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4.2.2
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Build project
-        run: npm run build
+        run: bun run build
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v3
