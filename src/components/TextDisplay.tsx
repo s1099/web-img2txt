@@ -65,7 +65,7 @@ const TextDisplay: React.FC<TextDisplayProps> = ({ text, theme }) => {
             <p className="whitespace-pre-wrap leading-relaxed">{text}</p>
           ) : (
             <p className="text-gray-500 dark:text-gray-400 text-center italic py-8">
-              Upload an image to see extracted text here
+              Upload an image to see text here
             </p>
           )}
         </ScrollArea>
