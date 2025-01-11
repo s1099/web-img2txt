@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, Image, LoaderCircle } from "lucide-react";
+import { Upload, Image as ImageIcon, LoaderCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ImageUploaderProps {
   onUpload: (file: File) => void;
@@ -8,25 +9,46 @@ interface ImageUploaderProps {
   theme: "light" | "dark";
 }
 
+const ACCEPTED_TYPES = {
+  "image/jpeg": [],
+  "image/png": [],
+  "image/gif": [],
+  "image/webp": [],
+};
+
 const ImageUploader: React.FC<ImageUploaderProps> = ({
   onUpload,
   isProcessing,
   theme,
 }) => {
+  const { toast } = useToast();
+
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    (acceptedFiles: File[], rejectedFiles: any[]) => {
+      if (rejectedFiles.length > 0) {
+        const error = rejectedFiles[0].errors[0];
+        toast({
+          variant: "destructive",
+          description: error.message,
+          duration: 3000,
+        });
+        return;
+      }
+
       if (acceptedFiles.length > 0) {
-        onUpload(acceptedFiles[0]);
+        const file = acceptedFiles[0];
+        onUpload(file);
       }
     },
-    [onUpload]
+    [onUpload, toast]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: { "image/*": [] },
-    disabled: isProcessing,
-  });
+  const { getRootProps, getInputProps, isDragActive, isDragReject } =
+    useDropzone({
+      onDrop,
+      accept: ACCEPTED_TYPES,
+      disabled: isProcessing,
+    });
 
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {
@@ -51,14 +73,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     return () => {
       window.removeEventListener("paste", handlePaste);
     };
-  }, [onUpload, isProcessing]);
+  }, [onUpload, isProcessing, toast]);
 
   return (
-    <div className="w-full p-4">
+    <div className="w-full space-y-4">
       <div
         {...getRootProps()}
         className={`
-          h-80 rounded-lg transition-all duration-200 ease-in-out
+          relative h-80 rounded-lg transition-all duration-200 ease-in-out
           border-2 border-dashed 
           flex flex-col items-center justify-center
           ${
@@ -66,6 +88,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               ? "cursor-not-allowed"
               : "cursor-pointer hover:border-blue-500"
           }
+          ${isDragReject ? "border-red-500 bg-red-50 dark:bg-red-900/20" : ""}
           ${
             isDragActive
               ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
@@ -74,8 +97,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               : "border-gray-300 bg-gray-50 hover:bg-gray-100"
           }
         `}
+        aria-label="Image upload area"
+        role="button"
+        tabIndex={0}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} aria-label="File input" />
 
         <div className="flex flex-col items-center space-y-4 p-6 text-center">
           {isProcessing ? (
@@ -84,7 +110,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               <div>
                 <p className="text-lg font-medium mb-2">Processing image</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Please wait
+                  Please wait while we extract the text
                 </p>
               </div>
             </>
@@ -92,15 +118,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             <>
               <Upload className="w-12 h-12 text-blue-500" />
               <div>
-                <p className="text-lg font-medium mb-2">Drop it here!</p>
+                <p className="text-lg font-medium mb-2">
+                  {isDragReject ? "Unsupported file type" : "Drop it here!"}
+                </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Release to upload image
+                  {isDragReject
+                    ? "Please use a valid image file"
+                    : "Release to upload your image"}
                 </p>
               </div>
             </>
           ) : (
             <>
-              <Image
+              <ImageIcon
                 className={`w-12 h-12 ${
                   theme === "dark" ? "text-gray-400" : "text-gray-500"
                 }`}
@@ -108,9 +138,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               <div>
                 <p className="text-lg font-medium mb-2">Upload an image</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Drag and drop here, or click to browse
+                  Drag and drop, paste, or click to browse
                 </p>
-              </div>{" "}
+              </div>
             </>
           )}
         </div>
