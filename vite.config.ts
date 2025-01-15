@@ -13,6 +13,6 @@ export default defineConfig({
   base: '/web-img2txt/',
   build: {
     ssrManifest: true,
-    sourcemap: true
+    sourcemap: process.env.NODE_ENV === 'development'
   }
 })
