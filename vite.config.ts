@@ -10,5 +10,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/web-img2txt/'
+  base: '/web-img2txt/',
+  build: {
+    ssrManifest: true,
+    sourcemap: true
+  }
 })
