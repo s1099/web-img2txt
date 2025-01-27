@@ -1,18 +1,19 @@
-import path from "path"
+import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/web-img2txt/',
+  base: "/web-img2txt/",
   build: {
     ssrManifest: true,
-    sourcemap: process.env.NODE_ENV === 'development'
-  }
-})
+    sourcemap: process.env.NODE_ENV === "development",
+  },
+});
