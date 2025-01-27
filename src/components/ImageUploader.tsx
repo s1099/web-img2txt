@@ -110,7 +110,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               <div>
                 <p className="text-lg font-medium mb-2">Processing image</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Please wait while we extract the text
+                  Extracting text...
                 </p>
               </div>
             </>

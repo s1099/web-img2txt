@@ -9,7 +9,7 @@ import { Toaster } from "./components/ui/toaster";
 function App() {
   const [extractedText, setExtractedText] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
   const { toast } = useToast();
 
   const handleImageUpload = async (file: File) => {
